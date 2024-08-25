@@ -42,28 +42,43 @@ class MyApp extends StatefulWidget { const MyApp({super.key});
   State<StatefulWidget> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> { bool _isDarkMode = false;
-void _toggleDarkMode() { setState(() {
-  _isDarkMode = !_isDarkMode; });
-}
-@override
-Widget build(BuildContext context) {
-  return MaterialApp( title: 'Flutter Demo', theme: ThemeData(
-    colorSchemeSeed: Colors.green,
-    extensions: const [MyTheme(themeColor: Color(0xFF0000FF))], ),
-    darkTheme: ThemeData(
-      colorSchemeSeed: Colors.green,
-      brightness: Brightness.dark,
-      extensions: const [MyTheme(themeColor: Color(0xFFFF0000))],
-    ),
-    themeMode: _isDarkMode ? ThemeMode.dark : ThemeMode.light, home: Scaffold(
-      body: const Center( child: ThemedWidget(),
+class _MyAppState extends State<MyApp> {
+  bool _isDarkMode = false;
+
+  void _toggleDarkMode() {
+    setState(() {
+      _isDarkMode = !_isDarkMode;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        colorSchemeSeed: Colors.green,
+        extensions: const [MyTheme(themeColor: Color(0xFF0000FF))],
       ),
-      floatingActionButton: FloatingActionButton( onPressed: () {
-        _toggleDarkMode(); },
-        child: const Icon(Icons.settings_brightness), ),
-    ), );
-} }
+      darkTheme: ThemeData(
+        colorSchemeSeed: Colors.green,
+        brightness: Brightness.dark,
+        extensions: const [MyTheme(themeColor: Color(0xFFFF0000))],
+      ),
+      themeMode: _isDarkMode ? ThemeMode.dark : ThemeMode.light,
+      home: Scaffold(
+        body: const Center(
+          child: ThemedWidget(),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            _toggleDarkMode();
+          },
+          child: const Icon(Icons.settings_brightness),
+        ),
+      ),
+    );
+  }
+}
 
 
 //アプリ独自のテーマを管理する方法としてTheme Extensionがあります。
