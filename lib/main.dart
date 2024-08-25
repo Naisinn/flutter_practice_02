@@ -13,25 +13,68 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.red).copyWith(surface: Colors.blueGrey),
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(
+            color: Colors.yellow,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
         useMaterial3: true,
+        extensions: const [MyTheme(themeColor: Color(0xFF0000FF))],
       ),
+
+      darkTheme: ThemeData(
+        colorSchemeSeed: Colors.blue,
+        brightness: Brightness.dark,
+        extensions: const [MyTheme(themeColor: Color(0xFFFF0000))],
+      ),
+
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
+    );
+  }
+}
+
+//アプリ独自のテーマを管理する方法としてTheme Extensionがあります。
+class MyTheme extends ThemeExtension<MyTheme> {
+  const MyTheme({
+    required this.themeColor,
+  });
+
+  final Color? themeColor;
+
+  @override
+  MyTheme copyWith({Color? themeColor}) {
+    return MyTheme(
+      themeColor: themeColor ?? this.themeColor,
+    );
+  }
+
+  @override
+  MyTheme lerp(MyTheme? other, double t) {
+    if (other is! MyTheme) {
+      return this;
+    }
+    return MyTheme(
+      themeColor: Color.lerp(themeColor, other.themeColor, t),
+    );
+  }
+}
+
+//MyTheme クラスのテーマを適用したウィジェットを実装します。 ThemedWidget という正方形を描画するウィジェットです。
+class ThemedWidget extends StatelessWidget {
+  const ThemedWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final themeData = Theme.of(context); // ❶
+    final myTheme = themeData.extension<MyTheme>()!; // ❷
+    final color = myTheme.themeColor;
+
+    return Container(
+      width: 100,
+      height: 100,
+      color: color,
     );
   }
 }
