@@ -31,7 +31,7 @@ class FirstScreen extends StatelessWidget {
       ),
     );
   }
-}//2
+}//3
 
 // 画面遷移先として用意したSecondScreenウィジェット
 class SecondScreen extends StatelessWidget {
