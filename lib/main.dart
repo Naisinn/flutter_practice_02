@@ -1,25 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 void main() {
-  runApp(MaterialApp(
-    initialRoute: '/',
-    routes: {
-      '/': (context) => FirstScreen(),
-      '/second': (context) => const SecondScreen(),
-      '/second/third': (context) => const ThirdScreen(),
-    },
-  ));
+  runApp(
+    MaterialApp.router(
+      routerConfig: _router,
+    ),
+  );
 }
 
-// アプリ起動時に表示されるFirstScreenウィジェット
-class FirstScreen extends StatefulWidget {
+final _router = GoRouter(
+  routes: [
+    GoRoute(
+      path: '/',
+      builder: (context, state) => const FirstScreen(), routes: [
+      GoRoute(
+        path: 'second',
+        builder: (context, state) => const SecondScreen(),routes:[
+        GoRoute(
+          path: 'third',
+          builder: (context, state) => const ThirdScreen(),
+        ),
+      ]
+      ), ],
+    ),
+  ],
+);
+
+class FirstScreen extends StatelessWidget {
   const FirstScreen({super.key});
-
-  @override
-  State<StatefulWidget> createState() => _FirstScreenState();
-}
-
-class _FirstScreenState extends State<FirstScreen> {
 
   @override
   Widget build(BuildContext context) {
@@ -34,15 +43,13 @@ class _FirstScreenState extends State<FirstScreen> {
             ElevatedButton(
               child: const Text('FirstからSecondへ'),
               onPressed: () {
-                Navigator.of(context).pushNamed('/second');
-                // Second画面へ遷移する処理を実装
+                GoRouter.of(context).go('/second');
               },
             ),
             ElevatedButton(
               child: const Text('FirstからThirdへ'),
               onPressed: () {
-                Navigator.of(context).pushNamed('/second/third');
-                // Third画面へ遷移する処理を実装
+                GoRouter.of(context).go('/second/third');
               },
             ),
           ],
@@ -59,19 +66,23 @@ class SecondScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('IncrementScreen'),
+        title: const Text('SecondScreen'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              child: const Text('SecondからThirdへ'), onPressed: () {
-              Navigator.of(context).pushNamed('/second/third');
-            },
-            ), ElevatedButton(
-              child: const Text('戻る'), onPressed: () {
-              Navigator.of(context).pop(); },
+              child: const Text('SecondからThirdへ'),
+              onPressed: () {
+                GoRouter.of(context).go('/second/third');
+              },
+            ),
+            ElevatedButton(
+              child: const Text('戻る'),
+              onPressed: () {
+                GoRouter.of(context).pop();
+              },
             ),
           ],
         ),
@@ -80,7 +91,6 @@ class SecondScreen extends StatelessWidget {
   }
 }
 
-// 画面遷移先として用意したThirdScreenウィジェット
 class ThirdScreen extends StatelessWidget {
   const ThirdScreen({super.key});
 
@@ -97,7 +107,7 @@ class ThirdScreen extends StatelessWidget {
             ElevatedButton(
               child: const Text('戻る'),
               onPressed: () {
-                Navigator.of(context).pop();
+                GoRouter.of(context).pop();
               },
             ),
           ],
