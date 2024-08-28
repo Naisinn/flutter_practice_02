@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MaterialApp(
-    home: FirstScreen(),
+  runApp(MaterialApp(
+    initialRoute: '/',
+    routes: {
+      '/': (context) => FirstScreen(),
+      '/second': (context) => const SecondScreen(),
+      '/second/third': (context) => const ThirdScreen(),
+    },
   ));
 }
 
@@ -15,7 +20,6 @@ class FirstScreen extends StatefulWidget {
 }
 
 class _FirstScreenState extends State<FirstScreen> {
-  int _number = 0; // ❶
 
   @override
   Widget build(BuildContext context) {
@@ -27,23 +31,19 @@ class _FirstScreenState extends State<FirstScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              'number = $_number',
+            ElevatedButton(
+              child: const Text('FirstからSecondへ'),
+              onPressed: () {
+                Navigator.of(context).pushNamed('/second');
+                // Second画面へ遷移する処理を実装
+              },
             ),
             ElevatedButton(
-              onPressed: () async {
-                final newNumber = await Navigator.of(context).push<int>(
-                  MaterialPageRoute(
-                    builder: (_) => SecondScreen(number: _number), // ❸
-                  ),
-                );
-                setState(() {
-                  if (newNumber != null) {
-                    _number = newNumber; // ❹
-                  }
-                });
-              }, // ❷
-              child: const Text('Secondへ'),
+              child: const Text('FirstからThirdへ'),
+              onPressed: () {
+                Navigator.of(context).pushNamed('/second/third');
+                // Third画面へ遷移する処理を実装
+              },
             ),
           ],
         ),
@@ -53,9 +53,7 @@ class _FirstScreenState extends State<FirstScreen> {
 }
 
 class SecondScreen extends StatelessWidget {
-  const SecondScreen({super.key, required this.number}); // ❺
-
-  final int number;
+  const SecondScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -68,15 +66,38 @@ class SecondScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              child: const Text('Increment'),
-              onPressed: () {
-                Navigator.of(context).pop(number + 1); // ❻
-              },
+              child: const Text('SecondからThirdへ'), onPressed: () {
+              Navigator.of(context).pushNamed('/second/third');
+            },
+            ), ElevatedButton(
+              child: const Text('戻る'), onPressed: () {
+              Navigator.of(context).pop(); },
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// 画面遷移先として用意したThirdScreenウィジェット
+class ThirdScreen extends StatelessWidget {
+  const ThirdScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('ThirdScreen'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
             ElevatedButton(
-              child: const Text('Decrement'),
+              child: const Text('戻る'),
               onPressed: () {
-                Navigator.of(context).pop(number - 1); // ❼
+                Navigator.of(context).pop();
               },
             ),
           ],
