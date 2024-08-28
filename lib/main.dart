@@ -7,48 +7,79 @@ void main() {
 }
 
 // アプリ起動時に表示されるFirstScreenウィジェット
-class FirstScreen extends StatelessWidget {
+class FirstScreen extends StatefulWidget {
   const FirstScreen({super.key});
+
+  @override
+  State<StatefulWidget> createState() => _FirstScreenState();
+}
+
+class _FirstScreenState extends State<FirstScreen> {
+  int _number = 0; // ❶
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // ◆ AppBar 画面上部のヘッダ部分となるWidget
       appBar: AppBar(
         title: const Text('FirstScreen'),
       ),
       body: Center(
-        child: ElevatedButton(
-          child: const Text('次へ'),
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => const SecondScreen(),
-              ),
-            );
-          },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'number = $_number',
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final newNumber = await Navigator.of(context).push<int>(
+                  MaterialPageRoute(
+                    builder: (_) => SecondScreen(number: _number), // ❸
+                  ),
+                );
+                setState(() {
+                  if (newNumber != null) {
+                    _number = newNumber; // ❹
+                  }
+                });
+              }, // ❷
+              child: const Text('Secondへ'),
+            ),
+          ],
         ),
       ),
     );
   }
-}//3
+}
 
-// 画面遷移先として用意したSecondScreenウィジェット
 class SecondScreen extends StatelessWidget {
-  const SecondScreen({super.key});
+  const SecondScreen({super.key, required this.number}); // ❺
+
+  final int number;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('SecondScreen'),
+        title: const Text('IncrementScreen'),
       ),
       body: Center(
-        child: ElevatedButton(
-          child: const Text('戻る'),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              child: const Text('Increment'),
+              onPressed: () {
+                Navigator.of(context).pop(number + 1); // ❻
+              },
+            ),
+            ElevatedButton(
+              child: const Text('Decrement'),
+              onPressed: () {
+                Navigator.of(context).pop(number - 1); // ❼
+              },
+            ),
+          ],
         ),
       ),
     );
